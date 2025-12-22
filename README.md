@@ -33,7 +33,7 @@ jobs:
           workflow_run_id: ${{ github.event.workflow_run.id }}
           head_sha: ${{ github.event.workflow_run.head_sha }}
           artifact_name: simulation-report
-          comment_header: "### Documentation Preview"
+          comment_header: '### Documentation Preview'
 ```
 
 ## References

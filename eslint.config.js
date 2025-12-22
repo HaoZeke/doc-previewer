@@ -3,11 +3,7 @@ import antfu from '@antfu/eslint-config'
 export default antfu(
   {
     typescript: true,
-    ignores: [
-      '.github',
-      'dist',
-      'node_modules',
-    ],
+    ignores: ['.github', 'dist', 'node_modules'],
   },
   {
     rules: {
@@ -15,6 +11,8 @@ export default antfu(
       'style/arrow-parens': ['error', 'always'],
       'curly': ['error', 'all'],
       'antfu/consistent-list-newline': 'off',
+      'ts/no-unused-expressions': 'off',
+      'jsonc/no-useless-escape': 'off',
     },
   },
   {
