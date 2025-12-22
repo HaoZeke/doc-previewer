@@ -4,23 +4,19 @@
   "private": true,
   "description": "A template for creating GitHub Actions",
   "author": {
-    "name": "hywax",
-    "email": "me@hywax.space"
+    "name": "HaoZeke",
+    "email": "HaoZeke@yandex.com"
   },
   "license": "MIT",
-  "homepage": "https://github.com/hywax/github-action-template",
+  "homepage": "https://github.com/HaoZeke/doc-previewer",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hywax/github-action-templat.git"
+    "url": "git+https://github.com/HaoZeke/doc-previewer.git"
   },
   "bugs": {
-    "url": "https://github.com/hywax/github-action-template/issues"
+    "url": "https://github.com/HaoZeke/doc-previewer/issues"
   },
-  "keywords": [
-    "github",
-    "actions",
-    "template"
-  ],
+  "keywords": ["github", "actions", "template"],
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -28,7 +24,7 @@
     }
   },
   "engines": {
-    "node": ">=22.21.1"
+    "node": ">=20.19.2"
   },
   "scripts": {
     "build": "tsc && vite build",
@@ -54,7 +50,7 @@
     "eslint": "^9.39.2",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
-    "typescript": "^5.9.3",
+    "typescript": "^5.5.4",
     "vite": "^7.3.0",
     "vitest": "^3.2.4"
   },
