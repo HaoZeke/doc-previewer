@@ -1,24 +1,35 @@
-name: Unique of your action name
-description: Description of your action
-author: Your GitHub username
+name: PR Documentation Previewer
+description: Posts a nightly.link for documentation artifacts on the associated Pull Request
+author: Rohit Goswami
 
-# The action's inputs
 inputs:
-  message:
-    description: A greeting message
-    default: Hello, World!
+  github-token:
+    description: GitHub token for API access
+    required: true
+    default: ${{ github.token }}
+  workflow_run_id:
+    description: The ID of the workflow run that generated the artifact
+    required: true
+  head_sha:
+    description: The SHA of the head commit
+    required: true
+  artifact_name:
+    description: The name of the artifact in the workflow
+    default: documentation
+    required: false
+  zip_display_name:
+    description: The label for the download link
+    default: documentation.zip
+    required: false
+  comment_header:
+    description: The header text for the PR comment
+    default: '### 🧪 Documentation Preview'
+    required: false
 
-# The action's outputs
-outputs:
-  resultMessage:
-    description: Result message
-
-# Branding
 branding:
   icon: activity
   color: purple
 
-# The action's runs
 runs:
   using: node20
   main: dist/index.js
