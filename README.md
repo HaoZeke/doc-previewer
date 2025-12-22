@@ -1,51 +1,59 @@
-# Github Action Template
+# PR Documentation Previewer
 
-Use this template to bootstrap the creation of a TypeScript action.
+This GitHub Action automatically posts a download link for documentation
+artifacts on Pull Requests. It utilizes [nightly.link](https://nightly.link/) to
+provide direct access to build outputs without requiring users to navigate the
+Actions UI.
 
 ## Features
 
-* 🪄️ All of the code is written in TypeScript
-* ✨ Fully customized [eslint](https://eslint.org/) configuration based on the config by [Antfu](https://github.com/antfu/eslint-config)
-* 🧪 Write tests quickly and conveniently with [vitest](https://vitest.dev/)
-* 🤝 Supports [conventional commits](https://www.conventionalcommits.org/)
-* 💅 Generate beautiful changelogs with [changelogen](https://github.com/unjs/changelogen)
-* ♾️ GitHub CI for your build
-* 📢 Issue templates
-* 📝 Pull request template
-* 🤖 Ready configuration for [renovatebot](https://github.com/apps/renovate) with [renovate-config](https://github.com/hywax/renovate-config)
-* 🚀 Action releases with just one command
-
-## Get started
-
-### GitHub Template
-
-This is a template repo. Click the green [Use this template](https://github.com/hywax/github-action-template/generate) button to get started.
-
-### Git Clone
-
-```shell
-git clone https://github.com/hywax/github-action-template.git
-cd github-action-template
-pnpm install
-```
+- 🔗 **Automatic Linking**: Generates direct download links for artifacts.
+- 🔄 **Smart Updates**: Updates existing comments to minimize PR clutter.
+- 🎨 **Customizable**: Modify headers, artifact names, and link labels.
 
 ## Usage
 
-The template contains the following scripts:
+Add this action to a workflow triggered by `workflow_run`.
 
-* `build` - Build for production
-* `release` - Generate changelog and npm publish
-* `lint` - Checks your code for any linting errors
-* `test` - Run all tests
-* `test:watch` - Run all tests with watch mode
-* `test:coverage` - Run all tests with code coverage report
-* `typecheck` - Run TypeScript type checking
-* `prepare` - Script for setting up husky hooks
+```yaml
+on:
+  workflow_run:
+    workflows: [Build Docs]
+    types: [completed]
 
-## Used by
+jobs:
+  comment:
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: HaoZeke/doc-previewer@v1
+        with:
+          workflow_run_id: ${{ github.event.workflow_run.id }}
+          head_sha: ${{ github.event.workflow_run.head_sha }}
+          artifact_name: simulation-report
+          comment_header: "### Documentation Preview"
+```
 
-If you are using this template, feel free to open a PR to add your project to the list.
+## References
+
+- [hywax/github-action-template](https://github.com/hywax/github-action-template/generate).
+- [HaoZeke/large-file-auditor](https://github.com/HaoZeke/large-file-auditor/generate).
+
+## Development
+
+This includes contains the following scripts:
+
+- `build` - Build for production
+- `release` - Generate changelog and npm publish
+- `lint` - Checks your code for any linting errors
+- `test` - Run all tests
+- `test:watch` - Run all tests with watch mode
+- `test:coverage` - Run all tests with code coverage report
+- `typecheck` - Run TypeScript type checking
+- `prepare` - Script for setting up husky hooks
 
 ## License
 
-This template was created under the [MIT License](LICENSE).
+[MIT](LICENSE).
