@@ -36,11 +36,6 @@ jobs:
           comment_header: '### Documentation Preview'
 ```
 
-## References
-
-- [hywax/github-action-template](https://github.com/hywax/github-action-template/generate).
-- [HaoZeke/large-file-auditor](https://github.com/HaoZeke/large-file-auditor/generate).
-
 ## Development
 
 This includes contains the following scripts:
