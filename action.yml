@@ -25,6 +25,9 @@ inputs:
     description: The header text for the PR comment
     default: '### 🧪 Documentation Preview'
     required: false
+  marker_id:
+    description: Optional marker id used to isolate this action's preview comment
+    required: false
 
 branding:
   icon: activity

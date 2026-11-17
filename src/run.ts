@@ -9,6 +9,9 @@ export async function run(): Promise<void> {
     const artifactName = getInput('artifact_name')
     const zipName = getInput('zip_display_name')
     const header = getInput('comment_header')
+    const markerIdInput = getInput('marker_id')
+    const markerId = markerIdInput.trim() || header.trim() || 'default'
+    const marker = `<!-- doc-previewer:${markerId} -->`
 
     const octokit = getOctokit(token)
     const { owner, repo } = context.repo
@@ -43,7 +46,6 @@ export async function run(): Promise<void> {
 
     // Construct the comment body
     const link = `https://nightly.link/${owner}/${repo}/actions/artifacts/${docArtifact.id}.zip`
-    const marker = ``
     const body = `${marker}\n${header}\n\nDownload: [${zipName}](${link})\n\nUnzip and open \`index.html\` to view.`
 
     const { data: comments } = await octokit.rest.issues.listComments({
@@ -52,7 +54,11 @@ export async function run(): Promise<void> {
       issue_number: prNumber,
     })
 
-    const existingComment = comments.find((c) => c.body?.includes(marker))
+    const existingComment = comments.find(
+      (c) =>
+        c.body?.includes(marker)
+        && (c.user?.login === 'github-actions[bot]' || c.user?.type === 'Bot'),
+    )
 
     if (existingComment) {
       info(`Updating existing comment: ${existingComment.id}`)
