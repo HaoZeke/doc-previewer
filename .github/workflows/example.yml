@@ -1,25 +1,64 @@
-name: GitHub Actions Example
+name: Documentation Preview
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: [Build Docs]
+    types: [completed]
   pull_request:
+    paths:
+      - action.yml
+      - .github/workflows/example.yml
+      - README.md
 
 jobs:
-  base:
-    name: Base
+  preview:
+    if: >-
+      github.event_name == 'workflow_run' &&
+      github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Local Action
-        id: base-action
-        uses: ./
+      - name: Comment with the documentation preview
+        uses: HaoZeke/doc-previewer@v1
         with:
-          message: 'Hello, World! This is a test.'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          workflow_run_id: ${{ github.event.workflow_run.id }}
+          head_sha: ${{ github.event.workflow_run.head_sha }}
 
-      - name: Print Output
-        id: output
-        run: echo "${{ steps.base-action.outputs.resultMessage }}"
+  metadata:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate the action interface
+        shell: node {0}
+        run: |
+          const { readFileSync } = require('node:fs')
+
+          const metadata = readFileSync('action.yml', 'utf8')
+          const expected = [
+            'github-token',
+            'workflow_run_id',
+            'head_sha',
+            'artifact_name',
+            'zip_display_name',
+            'comment_header',
+            'marker_id',
+          ]
+          const inputs = metadata.match(/\ninputs:\n([\s\S]*?)\n(?:branding|outputs|runs):\n/)
+          if (!inputs) throw new Error('action.yml has no inputs mapping')
+          const actual = [...inputs[1].matchAll(/^ {2}([\w-]+):$/gm)].map(match => match[1])
+          if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+            throw new Error(`unexpected inputs: ${JSON.stringify(actual)}`)
+          }
+          if (/^outputs:/m.test(metadata)) throw new Error('action must not define outputs')
+          for (const name of expected.slice(0, 3)) {
+            const block = inputs[1].match(new RegExp(`^  ${name}:\\n([\\s\\S]*?)(?=^  [\\w-]+:|(?![^]))`, 'm'))
+            if (!block || !/^ {4}required: true$/m.test(block[1])) {
+              throw new Error(`${name} must be required`)
+            }
+          }
