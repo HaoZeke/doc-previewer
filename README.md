@@ -16,30 +16,31 @@ Actions UI.
 Add this action to a workflow triggered by `workflow_run`.
 
 ```yaml
+name: Documentation Preview
+
 on:
   workflow_run:
     workflows: [Build Docs]
     types: [completed]
 
 jobs:
-  comment:
-    if: github.event.workflow_run.conclusion == 'success'
+  preview:
+    if: >-
+      github.event_name == 'workflow_run' &&
+      github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       pull-requests: write
     steps:
       - uses: HaoZeke/doc-previewer@v1
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           workflow_run_id: ${{ github.event.workflow_run.id }}
           head_sha: ${{ github.event.workflow_run.head_sha }}
           artifact_name: simulation-report
           comment_header: '### Documentation Preview'
 ```
-
-## References
-
-- [hywax/github-action-template](https://github.com/hywax/github-action-template/generate).
-- [HaoZeke/large-file-auditor](https://github.com/HaoZeke/large-file-auditor/generate).
 
 ## Development
 
